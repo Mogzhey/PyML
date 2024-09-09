@@ -5,7 +5,8 @@ from activations import ReLU, Softmax
 from losses import cce
 from model import Model
 
-test_xs = np.ones(shape=(64, 28*28))
+# TODO: add support for batches
+test_xs = np.ones(shape=(28*28))
 
 if __name__ == "__main__":
     model = Model(cce, [
@@ -15,4 +16,4 @@ if __name__ == "__main__":
     ])
 
     pred_ys = model.eval(test_xs)
-    print(pred_ys[0].shape) # shape is wrong
+    print(pred_ys.shape)

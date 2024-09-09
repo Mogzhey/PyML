@@ -18,7 +18,7 @@ class Dense(Layer):
         return rng.uniform(low=-limit, high=limit, size=shape)
 
     def forward(self, inp: np.ndarray) -> np.ndarray:
-        return self.activation.f(np.tensordot(inp, self.weights, axis=1) + self.bias)
+        return self.activation.f(np.tensordot(inp, self.weights, axes=1) + self.bias)
 
     def backward(self, xs: np.ndarray, ys: np.ndarray) -> None:
         pass

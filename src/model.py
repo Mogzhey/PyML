@@ -5,7 +5,7 @@ from layer import Layer
 
 class Model:
     def __init__(self, loss_func: Callable[[np.ndarray], np.ndarray], layers: list[Layer] = []):
-        self.layers = []
+        self.layers = layers
 
     def add_layer(self, layer: Layer) -> None:
         self.layers.push(layer)
