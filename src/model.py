@@ -17,7 +17,7 @@ class Model:
         for layer in self.layers:
             x = layer.forward(x)
 
-        return x   
+        return x
 
     def train(self, xs: np.ndarray, ys: np.ndarray, epochs: int, lr: float = 1e-3):
         pass
