@@ -28,23 +28,36 @@ class ReLU(Activation):
     
 
 class Sigmoid(Activation):
-    def f(self, x: np.ndarray) -> np.ndarray:
+    def _positive_sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
+
+
+    def _negative_sigmoid(self, x):
+        exp = np.exp(x)
+        return exp / (exp + 1)
+
+
+    def f(self, x):
+        # stable sigmoid, naiive implementation overflows
+        positive = x >= 0
+        negative = ~positive
+
+        result = np.zeros_like(x, dtype=float)
+        result[positive] = self._positive_sigmoid(x[positive])
+        result[negative] = self._negative_sigmoid(x[negative])
+
+        return result
     
     def df(self, x: np.ndarray) -> np.ndarray:
         fx = self.f(x)
         return fx * (1 - fx)
 
 
-class Softmax(Activation):
+class Softmax(Activation): # broken
     def f(self, x: np.ndarray) -> np.ndarray:
         exp = np.exp(x - np.max(x)) # subtract np.max(x) from arg to make it stable
         return exp / np.sum(exp)
 
     def df(self, x: np.ndarray) -> np.ndarray:
-        # https://aimatters.wordpress.com/2019/06/17/the-softmax-function-derivative/
-        S = self.f(x)
-        S_vector = S.reshape(-1, 1)
-        S_matrix = np.tile(S_vector, S.shape[0])
-
-        return np.diag(S) - (S_matrix * S_matrix.T)
+        s = self.f(x).reshape(-1, 1)
+        return np.diagflat(s) - np.dot(s, s.T)

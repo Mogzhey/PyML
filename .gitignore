@@ -1,2 +1,5 @@
 env
+data
 src/__pycache__
+src/testing.py
+log.txt

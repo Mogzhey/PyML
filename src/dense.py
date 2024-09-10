@@ -18,7 +18,27 @@ class Dense(Layer):
         return rng.uniform(low=-limit, high=limit, size=shape)
 
     def forward(self, inp: np.ndarray) -> np.ndarray:
-        return self.activation.f(np.tensordot(inp, self.weights, axes=1) + self.bias)
+        return self.activation(np.tensordot(inp, self.weights, axes=1) + self.bias)
 
-    def backward(self, xs: np.ndarray, ys: np.ndarray) -> None:
-        pass
+    def backward(self, inp: np.ndarray, dl_dy: np.ndarray, lr: float = 1e-3) -> np.ndarray:
+        # feedforward
+        X = self.forward(inp)
+
+        # calculate derivatives
+        dy_db = self.activation.df(X)
+        dy_dw = np.tensordot(inp, dy_db, axes=0)
+
+        """
+        print("\n")
+        print(f"weights shape = {self.weights.shape}, dy_dw shape = {dy_dw.shape}")
+        print(f"bias shape = {self.bias.shape}, dy_db shape = {dy_db.shape}")
+        print(f"X.shape = {X.shape}")
+        print(self.activation)
+        print("\n")
+        """
+
+        # update weights and biasses
+        self.weights -= lr * dl_dy * dy_dw
+        self.bias -= lr * dl_dy * dy_db
+
+        return X

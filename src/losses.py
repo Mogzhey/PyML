@@ -19,23 +19,26 @@ class MSE(Loss):
         return -2 * (y_true - y_pred).mean()
 
 
-class BinaryCrossEntropy(Loss):
+class BinaryCrossEntropy(Loss): # broken
     def f(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
+
         return -(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred)).mean()
 
     def df(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
+        y_pred = np.clip(y_pred, 1e-15, 1 - 1e-15)
         return -((y_true / y_pred) - ((1 - y_true) / (1 - y_pred))).mean()
 
 
-class BCE(BinaryCrossEntropy):
+class BCE(BinaryCrossEntropy): # broken
     def f(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        return super(y_true, y_pred)
+        return super().f(y_true, y_pred)
 
     def df(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        return super.df(y_pred)
+        return super().df(y_true, y_pred)
 
 
-class CategoricalCrossEntropy(Loss):
+class CategoricalCrossEntropy(Loss): # broken
     def f(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return -np.sum(y_true * np.log(y_pred))
 
@@ -43,9 +46,9 @@ class CategoricalCrossEntropy(Loss):
         return -np.sum(y_true / y_pred)
 
 
-class CCE(CategoricalCrossEntropy):
+class CCE(CategoricalCrossEntropy): # broken
     def f(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        return super(y_true, y_pred)
+        return super().f(y_true, y_pred)
 
     def df(self, y_true: np.ndarray, y_pred: np.ndarray) -> float:
-        return super.df(y_pred)
+        return super().df(y_true, y_pred)
